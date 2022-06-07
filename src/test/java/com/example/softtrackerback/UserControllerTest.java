@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -29,6 +30,7 @@ public class UserControllerTest {
     public void cleanup(){
         userRepository.deleteAll();
     }
+
     @Test
     public void postUser_whenUserIsValid_receiveOk(){
         User user = createValidUser();
@@ -56,6 +58,15 @@ public class UserControllerTest {
         User user = createValidUser();
         ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_V_1_0_USERS, user, GenericResponse.class);
         assertThat(Objects.requireNonNull(response.getBody()).getMessage()).isNotNull();
+    }
+
+    @Test
+    public void postUser_whenUSSerIsValid_passwordIsHashedInDatabase() {
+        User user = createValidUser();
+        testRestTemplate.postForEntity(API_V_1_0_USERS, user, Object.class);
+        List<User> userList = userRepository.findAll();
+        System.out.println(userList.get(0).toString());
+        assertThat( user.getPassword().equals(userList.get(0).getPassword())).isNotEqualTo(true);
     }
 
 }
