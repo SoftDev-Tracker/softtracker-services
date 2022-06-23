@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1.0")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
     private UserService userService;
 
@@ -20,6 +21,7 @@ public class UserController {
     @PostMapping("/users")
     GenericResponse createUser(@RequestBody User user) {
         userService.save(user);
+        System.out.println("A new user was saved ");
         return new GenericResponse("User saved");
     }
 }
